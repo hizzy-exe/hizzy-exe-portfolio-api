@@ -1,0 +1,29 @@
+# Local MaxMind Database files (Do NOT push to GitHub)
+geoip/*.mmdb
+geoip/GeoLite2-City*/
+
+# Python runtime artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Local Environment Variables & Virtual Environments
+.env
+venv/
+env/
+.venv/
+ENV/
+
+# IDEs and Editors (VS Code, PyCharm, Vim)
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swo.bak
+
+# OS Metadata & System files
+.DS_Store
+Thumbs.db
+ehthumbs.db

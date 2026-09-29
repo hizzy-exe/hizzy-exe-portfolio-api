@@ -1,0 +1,40 @@
+name: Production Deployment Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH Session
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            # 1. Navigate to deployment workspace or initialize it
+            mkdir -p ~/hizzy-portfolio-api
+            cd ~/hizzy-portfolio-api
+
+            if [ ! -d ".git" ]; then
+              git clone https://github.com .
+            else
+              git pull origin main
+            fi
+
+            mkdir -p geoip
+            curl -sS -L "https://maxmind.com{{ secrets.MAXMIND_LICENSE_KEY }}&suffix=tar.gz" | tar -xz -C geoip --strip-components=1
+          
+            find geoip/ -type f ! -name '*.mmdb' -delete
+
+            docker compose down
+            docker compose up --build -d
+            
+            docker image prune -f

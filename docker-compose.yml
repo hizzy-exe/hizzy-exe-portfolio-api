@@ -1,0 +1,23 @@
+services:
+  api:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://cache:6379/0
+    depends_on:
+      - cache
+
+  worker:
+    build: .
+    command: python -m app.worker
+    environment:
+      - REDIS_URL=redis://cache:6379/0
+    depends_on:
+      - cache
+
+  cache:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
